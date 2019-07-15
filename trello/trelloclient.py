@@ -28,7 +28,7 @@ except:
 class TrelloClient(object):
     """ Base class for Trello API access """
 
-    def __init__(self, api_key, api_secret=None, token=None, token_secret=None, http_service=requests, proxies={}):
+    def __init__(self, api_key, api_secret=None, token=None, token_secret=None, http_service=requests, proxies={},timeout=300):
         """
         Constructor
 
@@ -53,6 +53,7 @@ class TrelloClient(object):
         self.resource_owner_key = token
         self.resource_owner_secret = token_secret
         self.http_service = http_service
+        self.timeout = timeout
 
     def info_for_all_boards(self, actions):
         """
@@ -223,7 +224,8 @@ class TrelloClient(object):
         response = self.http_service.request(http_method, url, params=query_params,
                                              headers=headers, data=data,
                                              auth=self.oauth, files=files,
-                                             proxies=self.proxies)
+                                             proxies=self.proxies,
+                                             timeout=self.timeout)
 
         if response.status_code == 401:
             raise Unauthorized("%s at %s" % (response.text, url), response)
